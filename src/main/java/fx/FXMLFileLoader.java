@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 public class FXMLFileLoader {
 
+
     @SneakyThrows
     static public <T> Parent loadFXML(String filename, Class controllerClass, T param){
         FXMLLoader loader = new FXMLLoader(controllerClass.getResource(filename + ".fxml"));
