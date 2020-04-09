@@ -17,46 +17,43 @@ public class HierarchyHandler {
         ));
     }
 
-    public Set<String> getAllClassesNames(){
+    public Set<String> getAllClassesNames() {
         return hierarchyClassesList.keySet();
     }
 
-    public Field[] getFields(String className){
-        Class<HierarchyObject> hierarchyClass = (Class<HierarchyObject>) hierarchyClassesList.get(className);
-        return hierarchyClass.getFields();
+    public Field[] getFields(String className) throws ClassNotFoundException {
+        try {
+            Class<HierarchyObject> hierarchyClass = (Class<HierarchyObject>) hierarchyClassesList.get(className);
+            return hierarchyClass.getFields();
+        } catch (Exception e) {
+            throw new ClassNotFoundException();
+        }
     }
-    public Field[] getFields(HierarchyObject hierarchyObject){
+
+    public Field[] getFields(HierarchyObject hierarchyObject) throws ClassNotFoundException {
         String className = hierarchyObject.getClass().getAnnotation(HierarchyAnnotation.class).label();
         return getFields(className);
     }
 
-    @Deprecated
-    public DataType[] getFieldsTypes(String className){
-        //order is important!!!
 
-        Field[] fields = getFields(className);
-
-        List<DataType> fieldsTypes = new ArrayList<>();
-        for (int i = 0; i < fields.length; i++) {
-            fieldsTypes.add(i,fields[i].getAnnotation(HierarchyAnnotation.class).dataType());
+    public HierarchyObject getDefaultHierarchyObject(String className) throws ClassNotFoundException {
+        try {
+            Class<HierarchyObject> hierarchyObjectClass = (Class<HierarchyObject>) hierarchyClassesList.get(className);
+            return hierarchyObjectClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new ClassNotFoundException();
         }
-        return fieldsTypes.toArray(DataType[]::new);
     }
 
-
-    public HierarchyObject getDefaultHierarchyObject(String className) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Class<HierarchyObject> hierarchyObjectClass = (Class<HierarchyObject>) hierarchyClassesList.get(className);
-        return hierarchyObjectClass.getConstructor().newInstance();
-    }
-
-    public void setHierarchyObjectField(String label, HierarchyObject hierarchyObject, Object value) throws IllegalAccessException {
+    public void setHierarchyObjectField(String label, HierarchyObject hierarchyObject, Object value) throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
         Field[] fields = getFields(hierarchyObject);
-        for (Field field: fields) {
-            if(field.getAnnotation(HierarchyAnnotation.class).label().equals(label)){
-                field.set(hierarchyObject,value);
+        for (Field field : fields) {
+            if (field.getAnnotation(HierarchyAnnotation.class).label().equals(label)) {
+                field.set(hierarchyObject, value);
                 break;
             }
         }
+        throw new NoSuchFieldException();
     }
 
 

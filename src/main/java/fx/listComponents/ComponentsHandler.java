@@ -4,6 +4,7 @@ import Annotations.HierarchyAnnotation;
 import Hierarchy.DataType;
 import Hierarchy.HierarchyHandler;
 import Hierarchy.HierarchyObject;
+import Hierarchy.Newspaper;
 import fx.FXMLFileLoader;
 import javafx.scene.Parent;
 import lombok.SneakyThrows;
@@ -16,12 +17,17 @@ import java.util.Map;
 @Slf4j
 public class ComponentsHandler {
 //    Map of dataTypes' with corresponding controller classes .fxml files
-    static private final Map<DataType, ComponentInfo> componentsInfoList = Map.ofEntries(
-            Map.entry(DataType.object, new ComponentInfo(ObjectComponent.class, "objectComponent"))
+    private final Map<DataType, ComponentInfo> componentsInfoList = new HashMap<>();
     );
 
+    public ComponentsHandler() {
+        componentsInfoList.putAll(Map.ofEntries(
+                Map.entry(DataType.object, new ComponentInfo(ObjectComponent.class, "objectComponent"))
+        ));
+    }
+
     @SneakyThrows
-    public static Map<Class<? extends Component>, Parent> getControllersAndPanesForHierarchyObject(HierarchyObject hierarchyObject){
+    public Map<Class<? extends Component>, Parent> getControllersAndPanesForHierarchyObject(HierarchyObject hierarchyObject){
         HierarchyHandler hierarchyHandler = new HierarchyHandler();
         Field[] fields = hierarchyHandler.getFields(hierarchyObject);
         Map<Class<?  extends Component>, Parent> controllersAndPanes = new HashMap<>();
