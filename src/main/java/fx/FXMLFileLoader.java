@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
 
 public class FXMLFileLoader {
     @SneakyThrows
-    static public <T> Parent loadFXML(String filename, Class controllerClass, T param){
+    static public <T> FXMLFileLoaderResponse<Object, Object> loadFXML(String filename, Class controllerClass, T param){
         FXMLLoader loader = new FXMLLoader(controllerClass.getResource(filename + ".fxml"));
 
         Map<Class, Callable<?>> creators = new HashMap<>();
@@ -33,6 +33,6 @@ public class FXMLFileLoader {
                 }
             }
         });
-        return loader.load();
+        return new FXMLFileLoaderResponse<>(loader.load(), loader.getController());
     }
 }

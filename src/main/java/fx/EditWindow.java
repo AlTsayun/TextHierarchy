@@ -1,8 +1,10 @@
 package fx;
 
+import Annotations.HierarchyAnnotation;
 import Hierarchy.HierarchyObject;
 import fx.listComponents.Component;
 import fx.listComponents.ComponentsHandler;
+import fx.listComponents.LoadedHandlerResponse;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,11 +14,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class EditWindow implements Initializable {
 
@@ -24,7 +25,7 @@ public class EditWindow implements Initializable {
 
     private EditWindowListener listener;
 
-    private List<? extends Component> controllers;
+    Map<Field, Component> fieldComponentMap;
 
     @FXML
     private Label lbTitle;
@@ -46,8 +47,18 @@ public class EditWindow implements Initializable {
 
     @FXML
     void onBtnSaveClick(ActionEvent event) {
-        listener.saveHierarchyObject(hierarchyObjectToEdit);
-        onBtnCancelClick(event);
+
+        try {
+            Set<Field> fields = fieldComponentMap.keySet();
+            for (Field f : fields) {
+                f.set(hierarchyObjectToEdit, fieldComponentMap.get(f).getValue());
+            }
+
+            listener.saveHierarchyObject(hierarchyObjectToEdit);
+            onBtnCancelClick(event);
+        }catch (Exception e){
+            btnSave.setStyle("-fx-focus-color: red");
+        }
     }
 
 
@@ -58,8 +69,10 @@ public class EditWindow implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Map<Class<? extends Component>, Parent> controllersAndPanes = ComponentsHandler.getControllersAndPanesForHierarchyObject(hierarchyObjectToEdit);
-
-        controllers = new ArrayList<Component>();
+        ComponentsHandler componentsHandler = new ComponentsHandler();
+        LoadedHandlerResponse response = componentsHandler.loadComponents(hierarchyObjectToEdit);
+        fieldComponentMap = response.fieldComponentMap;
+        editList.getChildren().setAll(response.panes);
+        lbTitle.setText(hierarchyObjectToEdit.getClass().getAnnotation(HierarchyAnnotation.class).label());
     }
 }

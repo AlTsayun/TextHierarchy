@@ -2,10 +2,7 @@ package fx.listComponents;
 
 import Annotations.HierarchyAnnotation;
 import Hierarchy.HierarchyObject;
-import fx.EditWindow;
-import fx.EditWindowConstructorParam;
-import fx.EditWindowListener;
-import fx.FXMLFileLoader;
+import fx.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,10 +14,11 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ObjectComponent extends Component implements Initializable {
+public class ObjectComponent implements Component, MainMenuComponent{
 
     private HierarchyObject value;
 
@@ -33,7 +31,8 @@ public class ObjectComponent extends Component implements Initializable {
     @FXML
     public void onBtnEditClicked(ActionEvent event) {
         final HierarchyObject[] hierarchyObjectToEdit = {value};
-        Parent editWindowRoot = FXMLFileLoader.loadFXML("editWindow",
+
+        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("editWindow",
                 EditWindow.class,
                 new EditWindowConstructorParam(hierarchyObjectToEdit[0], new EditWindowListener() {
                     @Override
@@ -41,14 +40,18 @@ public class ObjectComponent extends Component implements Initializable {
                         hierarchyObjectToEdit[0] = hierarchyObject;
                     }
                 }));
+        Parent editWindowRoot = (Parent) loaderResponse.loadedObject;
         Stage editWindowStage = new Stage();
-        editWindowStage.setTitle("");
-        editWindowStage.initModality(Modality.WINDOW_MODAL);
-        editWindowStage.initOwner(
-                ((Node) event.getSource()).getScene().getWindow());
+        editWindowStage.setTitle("Редактирование объекта " + lblName.getText());
+        editWindowStage.initModality(Modality.APPLICATION_MODAL);
         editWindowStage.setScene(new Scene(editWindowRoot));
         editWindowStage.setResizable(false);
         editWindowStage.showAndWait();
+    }
+
+    @Override
+    public void delete() {
+
     }
 
     public ObjectComponent(ComponentConstructorParam param) {
@@ -58,6 +61,11 @@ public class ObjectComponent extends Component implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         lblName.setText(value.getClass().getAnnotation(HierarchyAnnotation.class).label());
+    }
+
+    @Override
+    public Object getValue() throws IOException {
+        return value;
     }
 }
 
