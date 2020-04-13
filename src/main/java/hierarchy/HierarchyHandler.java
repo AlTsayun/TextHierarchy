@@ -1,9 +1,8 @@
-package Hierarchy;
+package hierarchy;
 
-import Annotations.HierarchyAnnotation;
+import annotations.HierarchyAnnotation;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class HierarchyHandler {
@@ -13,8 +12,14 @@ public class HierarchyHandler {
 
     public HierarchyHandler() {
         hierarchyClassesList.putAll(Map.ofEntries(
-                Map.entry(Newspaper.class.getAnnotation(HierarchyAnnotation.class).label(), Newspaper.class)
-        ));
+                Map.entry(NewsArticle.class.getAnnotation(HierarchyAnnotation.class).label(), NewsArticle.class),
+                Map.entry(Newspaper.class.getAnnotation(HierarchyAnnotation.class).label(), Newspaper.class),
+                Map.entry(Novel.class.getAnnotation(HierarchyAnnotation.class).label(), Novel.class),
+                Map.entry(Poem.class.getAnnotation(HierarchyAnnotation.class).label(), Poem.class),
+                Map.entry(Prose.class.getAnnotation(HierarchyAnnotation.class).label(), Prose.class),
+                Map.entry(Schoolbook.class.getAnnotation(HierarchyAnnotation.class).label(), Schoolbook.class),
+                Map.entry(Text.class.getAnnotation(HierarchyAnnotation.class).label(), Text.class)
+                ));
     }
 
     public Set<String> getAllClassesNames() {
@@ -24,7 +29,8 @@ public class HierarchyHandler {
     public Field[] getFields(String className) throws ClassNotFoundException {
         try {
             Class<HierarchyObject> hierarchyClass = (Class<HierarchyObject>) hierarchyClassesList.get(className);
-            return hierarchyClass.getFields();
+            Field[] fields = hierarchyClass.getFields();
+            return fields;
         } catch (Exception e) {
             throw new ClassNotFoundException();
         }

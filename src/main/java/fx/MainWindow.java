@@ -1,11 +1,12 @@
 package fx;
 
-import Annotations.HierarchyAnnotation;
-import Hierarchy.HierarchyHandler;
-import Hierarchy.HierarchyObject;
+import annotations.HierarchyAnnotation;
+import hierarchy.HierarchyHandler;
+import hierarchy.HierarchyObject;
 import fx.listComponents.MainMenuComponent;
 import fx.listComponents.ObjectComponent;
 import fx.listComponents.ComponentConstructorParam;
+import hierarchy.dataEnums.Language;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -160,6 +161,8 @@ public class MainWindow implements Initializable {
 
             return cell;
 
+
         });
     }
+
 }

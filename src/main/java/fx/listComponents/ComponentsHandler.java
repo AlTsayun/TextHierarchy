@@ -1,9 +1,10 @@
 package fx.listComponents;
 
-import Annotations.HierarchyAnnotation;
-import Hierarchy.DataType;
-import Hierarchy.HierarchyHandler;
-import Hierarchy.HierarchyObject;
+import annotations.EnumAnnotation;
+import annotations.HierarchyAnnotation;
+import hierarchy.DataType;
+import hierarchy.HierarchyHandler;
+import hierarchy.HierarchyObject;
 import fx.FXMLFileLoader;
 import fx.FXMLFileLoaderResponse;
 import javafx.scene.Parent;
@@ -22,6 +23,9 @@ public class ComponentsHandler {
         componentsInfoList.putAll(Map.ofEntries(
                 Map.entry(DataType.object, new ComponentInfo(ObjectComponent.class, "objectComponent")),
                 Map.entry(DataType.integer, new ComponentInfo(IntegerComponent.class, "integerComponent")),
+                Map.entry(DataType.bool, new ComponentInfo(BoolComponent.class, "boolComponent")),
+                Map.entry(DataType.date, new ComponentInfo(DateComponent.class, "dateComponent")),
+                Map.entry(DataType.enumeration, new ComponentInfo(EnumerationComponent.class, "enumerationComponent")),
                 Map.entry(DataType.string, new ComponentInfo(StringComponent.class, "stringComponent"))
         ));
     }

@@ -1,6 +1,6 @@
 package fx;
 
-import Hierarchy.HierarchyHandler;
+import hierarchy.HierarchyHandler;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.net.URL;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package Hierarchy;
+package hierarchy;
 
 public interface HierarchyObject {
 }

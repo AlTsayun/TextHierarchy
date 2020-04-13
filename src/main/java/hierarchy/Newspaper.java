@@ -1,6 +1,6 @@
-package Hierarchy;
+package hierarchy;
 
-import Annotations.HierarchyAnnotation;
+import annotations.HierarchyAnnotation;
 
 @HierarchyAnnotation(dataType = DataType.object, label = "Газета")
 public class Newspaper implements HierarchyObject {

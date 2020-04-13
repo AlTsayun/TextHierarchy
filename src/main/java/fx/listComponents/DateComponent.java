@@ -1,36 +1,37 @@
 package fx.listComponents;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-public class StringComponent implements Component {
+public class DateComponent implements Component{
 
-    private String value;
+    private LocalDate value;
     private String lblText;
     @FXML
     private Label label;
 
     @FXML
-    private TextField tfValue;
+    private DatePicker dpValue;
 
     @Override
     public Object getValue() throws IOException {
-        return tfValue.getText();
+        return dpValue.getValue();
     }
 
-    public StringComponent(ComponentConstructorParam param) {
+    public DateComponent(ComponentConstructorParam param) {
         this.lblText = param.lblText;
-        this.value = (String) param.value;
+        this.value = (LocalDate) param.value;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         label.setText(lblText);
-        tfValue.setText(value);
+        dpValue.setValue(value);
     }
 }

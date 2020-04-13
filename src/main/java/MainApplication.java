@@ -17,6 +17,7 @@ public class MainApplication extends Application{
         URL resource = MainWindow.class.getResource("mainWindow.fxml");
         Parent root = FXMLLoader.load(resource);
         Scene scene = new Scene(root);
+        stage.setTitle("TextHierarchy");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

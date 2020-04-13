@@ -1,6 +1,5 @@
 package fx.listComponents;
 
-import Hierarchy.HierarchyObject;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

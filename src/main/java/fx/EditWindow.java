@@ -1,20 +1,18 @@
 package fx;
 
-import Annotations.HierarchyAnnotation;
-import Hierarchy.HierarchyObject;
+import annotations.HierarchyAnnotation;
+import hierarchy.HierarchyObject;
 import fx.listComponents.Component;
 import fx.listComponents.ComponentsHandler;
 import fx.listComponents.LoadedHandlerResponse;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;

@@ -1,6 +1,6 @@
 package fx;
 
-import Hierarchy.HierarchyObject;
+import hierarchy.HierarchyObject;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

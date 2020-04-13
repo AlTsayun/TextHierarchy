@@ -3,25 +3,40 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<Pane fx:id="parentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fx.listComponents.ObjectComponent">
+<Pane fx:id="parentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fx.listComponents.ObjectComponent">
    <children>
-      <HBox alignment="CENTER" prefWidth="400.0" spacing="5.0">
+      <GridPane prefHeight="40.0" prefWidth="400.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.0" minWidth="10.0" prefWidth="225.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.0" minWidth="10.0" prefWidth="225.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
             <Label fx:id="lblName" text="Label">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
             </Label>
-            <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnEdit" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onBtnEditClicked" text="Edit" />
+            <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.columnSpan="2">
+               <children>
+                  <Region prefHeight="40.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnEdit" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onBtnEditClicked" text="Edit">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </HBox>
+      </GridPane>
    </children>
 </Pane>

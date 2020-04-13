@@ -1,6 +1,6 @@
-package Annotations;
+package annotations;
 
-import Hierarchy.DataType;
+import hierarchy.DataType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

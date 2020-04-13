@@ -1,6 +1,6 @@
 package fx;
 
-import Hierarchy.HierarchyObject;
+import hierarchy.HierarchyObject;
 
 public interface EditWindowListener {
     void saveHierarchyObject(HierarchyObject hierarchyObject);

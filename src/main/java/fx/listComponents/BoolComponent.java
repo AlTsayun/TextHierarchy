@@ -1,36 +1,36 @@
 package fx.listComponents;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class StringComponent implements Component {
+public class BoolComponent implements Component{
 
-    private String value;
+    private boolean value;
     private String lblText;
+
+    @Override
+    public Object getValue() throws IOException {
+        return cbValue.isSelected();
+    }
     @FXML
     private Label label;
 
     @FXML
-    private TextField tfValue;
+    private CheckBox cbValue;
 
-    @Override
-    public Object getValue() throws IOException {
-        return tfValue.getText();
-    }
-
-    public StringComponent(ComponentConstructorParam param) {
+    public BoolComponent(ComponentConstructorParam param) {
         this.lblText = param.lblText;
-        this.value = (String) param.value;
+        this.value = (boolean) param.value;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        cbValue.setSelected(value);
         label.setText(lblText);
-        tfValue.setText(value);
     }
 }
