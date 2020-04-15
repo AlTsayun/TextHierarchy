@@ -1,11 +1,11 @@
-package fileHandlers;
+package serializers;
 
 import hierarchy.HierarchyObject;
 
 import java.io.*;
 import java.util.ArrayList;
 
-public class BinaryHandler implements FileHandler{
+public class BinarySerializer implements Serializer {
     @Override
     public void write(HierarchyObject[] hierarchyObjects, String fileName) throws IOException {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
