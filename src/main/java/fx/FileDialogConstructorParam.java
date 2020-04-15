@@ -4,5 +4,5 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class FileDialogConstructorParam {
-    FileDialogListener listener;
+    public final FileDialogListener listener;
 }

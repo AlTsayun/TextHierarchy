@@ -1,5 +1,7 @@
 package fx;
 
+import serializers.SerializersTypes;
+
 public interface FileDialogListener {
-    void sendFilePath(String path);
+    void sendFileInfo(String path, SerializersTypes serializersType);
 }

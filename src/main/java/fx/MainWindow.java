@@ -19,6 +19,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import serializers.SerializersHandler;
+import serializers.SerializersTypes;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,6 +34,12 @@ public class MainWindow implements Initializable {
     private ListView<MainMenuComponent> mainList;
     @FXML
     private Button btnNew;
+
+    @FXML
+    private Button btnLoad;
+
+    @FXML
+    private Button btnSave;
 
     @FXML
     private Button btnDelete;
@@ -52,16 +60,7 @@ public class MainWindow implements Initializable {
                             classNameToCreate[0] = className;
                         }
                     }));
-            Parent chooseHierarchyClassMenuRoot = (Parent) loaderResponse.loadedObject;
-
-            Stage chooseHierarchyClassMenuStage = new Stage();
-            chooseHierarchyClassMenuStage.setTitle("Выберите класс");
-            chooseHierarchyClassMenuStage.initModality(Modality.WINDOW_MODAL);
-            chooseHierarchyClassMenuStage.initOwner(
-                    ((Node) event.getSource()).getScene().getWindow());
-            chooseHierarchyClassMenuStage.setScene(new Scene(chooseHierarchyClassMenuRoot));
-            chooseHierarchyClassMenuStage.setResizable(false);
-            chooseHierarchyClassMenuStage.showAndWait();
+            showModalWindow((Parent) loaderResponse.loadedObject, "Выберите класс");
 
             if (classNameToCreate[0] == null) {
                 //todo: come up with an exception
@@ -88,6 +87,17 @@ public class MainWindow implements Initializable {
         }
     }
 
+    private void showModalWindow(Parent loadedObject, String title) {
+        Parent root = (Parent) loadedObject;
+
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setScene(new Scene(root));
+        stage.setResizable(false);
+        stage.showAndWait();
+    }
+
     @FXML
     void onBtnDeleteClicked(ActionEvent event) {
         
@@ -109,6 +119,47 @@ public class MainWindow implements Initializable {
         MainMenuComponent item = mainList.getSelectionModel().getSelectedItem();
         log.info("Editing: " + item.toString());
         item.onBtnEditClicked(new ActionEvent());
+    }
+
+
+    @FXML
+    void onBtnSaveClicked(ActionEvent event) {
+        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("fileDialog",
+                FileDialog.class,
+                new FileDialogConstructorParam(new FileDialogListener() {
+                    @Override
+                    public void sendFileInfo(String path, SerializersTypes serializersType) {
+                        try {
+                            SerializersHandler serializersHandler = new SerializersHandler();
+                            serializersHandler.write(path, serializersType);
+                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error");
+                            alert.setHeaderText("Cannot save file!");
+                            alert.showAndWait();
+                        }
+                    }
+                }));
+        showModalWindow((Parent) loaderResponse.loadedObject, "Configure file saving");
+    }
+
+    @FXML
+    void onBtnLoadClicked(ActionEvent event) {
+        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("fileDialog",
+                FileDialog.class,
+                new FileDialogConstructorParam(new FileDialogListener() {
+                    @Override
+                    public void sendFileInfo(String path, SerializersTypes serializersType) {
+                        try {
+                            SerializersHandler serializersHandler = new SerializersHandler();
+                            serializersHandler.read(path, serializersType);
+                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error");
+                            alert.setHeaderText("Cannot load file!");
+                            alert.showAndWait();
+                        }
+                    }
+                }));
+        showModalWindow((Parent) loaderResponse.loadedObject, "Configure file loading");
     }
 
 
