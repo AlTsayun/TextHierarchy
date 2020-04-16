@@ -1,41 +1,43 @@
 package serializers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hierarchy.HierarchyObject;
 import lombok.RequiredArgsConstructor;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.concurrent.*;
+
 @RequiredArgsConstructor
-public class BinarySerializer<T> implements Serializer<T> {
+public class JsonSerializer<T> implements Serializer<T> {
 
     private final long timeout;
     private final TimeUnit timeUnit;
 
-
     @Override
     public void write(T[] objects, String fileName) throws IOException {
-        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))){
-        for (T o: objects) {
-            objectOutputStream.writeObject(o);
-        }
-        objectOutputStream.writeObject( (T) null);
+        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))){
+        ObjectMapper objectMapper = new ObjectMapper();
+            for (T o: objects) {
+                bufferedWriter.write(objectMapper.writeValueAsString(o));
+            }
         }
     }
 
     @Override
     public ArrayList<T> read(String fileName) throws IOException {
-
+        final ObjectMapper objectMapper = new ObjectMapper();
         ArrayList<T> objects;
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         final Future future = executor.submit(() -> {
             try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
                 ArrayList<T> objectsWhileReading = new ArrayList<>();
-                T o;
-                while ((o = (T) objectInputStream.readObject()) != null) {
+                String str;
+                while ((str = (String) objectInputStream.readObject()) != null) {
 
-                    objectsWhileReading.add(o);
+                    objectsWhileReading.add(objectMapper.readValue(str));
                 }
                 return objectsWhileReading;
             } catch (IOException | ClassNotFoundException e) {

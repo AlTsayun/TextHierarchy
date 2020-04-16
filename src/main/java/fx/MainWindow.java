@@ -129,14 +129,14 @@ public class MainWindow implements Initializable {
                 new FileDialogConstructorParam(new FileDialogListener() {
                     @Override
                     public void sendFileInfo(String path, SerializersTypes serializersType) {
-                        try {
-                            SerializersHandler serializersHandler = new SerializersHandler();
-                            serializersHandler.write(path, serializersType);
-                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error");
-                            alert.setHeaderText("Cannot save file!");
-                            alert.showAndWait();
-                        }
+//                        try {
+//                            SerializersHandler serializersHandler = new SerializersHandler();
+//                            serializersHandler.write(path, serializersType);
+//                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
+//                            alert.setTitle("Error");
+//                            alert.setHeaderText("Cannot save file!");
+//                            alert.showAndWait();
+//                        }
                     }
                 }));
         showModalWindow((Parent) loaderResponse.loadedObject, "Configure file saving");
