@@ -17,8 +17,8 @@
                <children>
                   <HBox alignment="CENTER_RIGHT" prefWidth="420.0" spacing="5.0">
                      <children>
-                        <Button fx:id="btnLoad" mnemonicParsing="false" onAction="#onBtnLoadClicked" text="Load" visible="false" />
-                        <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onBtnSaveClicked" text="Save" visible="false" />
+                        <Button fx:id="btnLoad" mnemonicParsing="false" onAction="#onBtnLoadClicked" text="Load" />
+                        <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onBtnSaveClicked" text="Save" />
                         <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#onBtnDeleteClicked" text="Delete" />
                         <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#onBtnEditClicked" text="Edit" />
                         <Button fx:id="btnNew" mnemonicParsing="false" onAction="#onBtnNewClicked" text="New" />

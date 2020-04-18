@@ -50,7 +50,7 @@ public class EnumerationComponent implements Component{
                 if (item == null) {
                     setText(null);
                 } else {
-                    setText(item.getDeclaringClass().getField(item.toString()).getAnnotation(EnumAnnotation.class).fullName());
+                    setText(item.getDeclaringClass().getField(item.name()).getAnnotation(EnumAnnotation.class).fullName());
                 }
             }
         });
@@ -64,7 +64,7 @@ public class EnumerationComponent implements Component{
                     if (item == null) {
                         setText(null);
                     } else {
-                        setText(item.getDeclaringClass().getField(item.toString()).getAnnotation(EnumAnnotation.class).fullName());
+                        setText(item.getDeclaringClass().getField(item.name()).getAnnotation(EnumAnnotation.class).fullName());
                     }
                 }
             };
