@@ -50,8 +50,6 @@ class JsonSerializerTest {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         String result = mapper.writeValueAsString(date);
-        String actual = "2014-12-20";
-        System.out.println(result);
-        System.out.println(actual);
+        assertEquals(result, "\"2014-12-20\"");
     }
 }
