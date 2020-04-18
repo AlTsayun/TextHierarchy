@@ -1,4 +1,6 @@
 package hierarchy;
 
-public interface HierarchyObject {
+import java.io.Serializable;
+
+public interface HierarchyObject extends Serializable {
 }

@@ -147,11 +147,12 @@ public class MainWindow implements Initializable {
         FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("fileDialog",
                 FileDialog.class,
                 new FileDialogConstructorParam(new FileDialogListener() {
+                    @SneakyThrows
                     @Override
                     public void sendFileInfo(String path, SerializersTypes serializersType) {
                         try {
-                            SerializersHandler serializersHandler = new SerializersHandler();
-                            serializersHandler.read(path, serializersType);
+                            SerializersHandler serializersHandler = new SerializersHandler(serializersType);
+                            serializersHandler.read(path);
                         } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
                             alert.setTitle("Error");
                             alert.setHeaderText("Cannot load file!");

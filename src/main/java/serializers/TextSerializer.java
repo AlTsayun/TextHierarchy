@@ -1,11 +1,20 @@
 package serializers;
 
-import hierarchy.HierarchyObject;
+
+import annotations.SerializerAnnotation;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
+@SerializerAnnotation(type = SerializersTypes.text)
 public class TextSerializer<T> implements Serializer<T> {
+
+    private final long timeout;
+    private final TimeUnit timeUnit;
+
 
     @Override
     public void write(T[] objects, String fileName) throws IOException {
@@ -13,7 +22,7 @@ public class TextSerializer<T> implements Serializer<T> {
     }
 
     @Override
-    public ArrayList<T> read(String fileName) throws IOException {
+    public List<T> read(String fileName) throws IOException {
         return null;
     }
 }
