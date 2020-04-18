@@ -14,7 +14,7 @@ public class SerializersHandler {
 
     private final Map<SerializersTypes, Class<?>> serializersList = new HashMap<>();
     private final Serializer<HierarchyObject> serializer;
-    private final long timeout = 10;
+    private final long timeout = 40;
     private final TimeUnit timeUnit = TimeUnit.SECONDS;
 
     public SerializersHandler(SerializersTypes serializersType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {

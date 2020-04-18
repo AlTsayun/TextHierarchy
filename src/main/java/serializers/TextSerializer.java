@@ -4,6 +4,8 @@ package serializers;
 import annotations.HierarchyAnnotation;
 import annotations.SerializerAnnotation;
 import hierarchy.DataType;
+import hierarchy.HierarchyHandler;
+import hierarchy.dataEnums.DataEnumsHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,12 @@ public class TextSerializer<T> implements Serializer<T> {
     private final ClassesHandler objectsHandler;
     private final ClassesHandler enumsHandler;
 
+    public TextSerializer(long timeout, TimeUnit timeUnit) {
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+        this.objectsHandler = new HierarchyHandler();
+        this.enumsHandler = new DataEnumsHandler();
+    }
 
     @RequiredArgsConstructor
     class ReadResponse{

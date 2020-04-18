@@ -17,7 +17,7 @@ class SerializersHandlerTest {
     void givenObjectsAndSerializerTypeAndPath_whenWriting_thenSavingToFile(){
         assertDoesNotThrow(() ->{
             SerializersHandler handler = new SerializersHandler(SerializersTypes.text);
-            handler.write(new HierarchyObject[]{new Newspaper(), new Text()},"test.txt");
+            handler.write(new HierarchyObject[]{new Newspaper(), new Text(), new NewsArticle(), new Novel(), new Poem(), new Prose(), new Schoolbook()},"test.txt");
 
         });
     }

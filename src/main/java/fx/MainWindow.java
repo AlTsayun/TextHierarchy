@@ -6,12 +6,11 @@ import hierarchy.HierarchyObject;
 import fx.listComponents.MainMenuComponent;
 import fx.listComponents.ObjectComponent;
 import fx.listComponents.ComponentConstructorParam;
-import hierarchy.dataEnums.Language;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,14 +23,17 @@ import serializers.SerializersTypes;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class MainWindow implements Initializable {
 
     @FXML
-    private ListView<MainMenuComponent> mainList;
+    private ListView<MainMenuComponent> lvMain;
     @FXML
     private Button btnNew;
 
@@ -76,7 +78,7 @@ public class MainWindow implements Initializable {
                     new ComponentConstructorParam(null, hierarchyObjectToEdit));
 
 
-            mainList.getItems().add((MainMenuComponent) loaderResponse.controller);
+            lvMain.getItems().add((MainMenuComponent) loaderResponse.controller);
 //           mainList.getChildren().add((Parent) loaderResponse.loadedObject);
 
 
@@ -105,9 +107,9 @@ public class MainWindow implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.OK){
-            MainMenuComponent item = mainList.getSelectionModel().getSelectedItem();
+            MainMenuComponent item = lvMain.getSelectionModel().getSelectedItem();
             log.info("Removing: " + item.toString());
-            mainList.getItems().remove(item);
+            lvMain.getItems().remove(item);
             item.delete();
         }
 
@@ -116,7 +118,7 @@ public class MainWindow implements Initializable {
 
     @FXML
     void onBtnEditClicked(ActionEvent event) {
-        MainMenuComponent item = mainList.getSelectionModel().getSelectedItem();
+        MainMenuComponent item = lvMain.getSelectionModel().getSelectedItem();
         log.info("Editing: " + item.toString());
         item.onBtnEditClicked(new ActionEvent());
     }
@@ -128,15 +130,20 @@ public class MainWindow implements Initializable {
                 FileDialog.class,
                 new FileDialogConstructorParam(new FileDialogListener() {
                     @Override
+                    @SneakyThrows
                     public void sendFileInfo(String path, SerializersTypes serializersType) {
-//                        try {
-//                            SerializersHandler serializersHandler = new SerializersHandler();
-//                            serializersHandler.write(path, serializersType);
-//                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
-//                            alert.setTitle("Error");
-//                            alert.setHeaderText("Cannot save file!");
-//                            alert.showAndWait();
-//                        }
+                        try {
+                            SerializersHandler serializersHandler = new SerializersHandler(serializersType);
+                            HierarchyObject[] objects = lvMain.getItems().stream().map((component ->{
+                                return (HierarchyObject) component;
+                            })).toArray(HierarchyObject[]::new);
+                            serializersHandler.write(objects, path);
+
+                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error");
+                            alert.setHeaderText("Cannot save file!");
+                            alert.showAndWait();
+                        }
                     }
                 }));
         showModalWindow((Parent) loaderResponse.loadedObject, "Configure file saving");
@@ -152,7 +159,16 @@ public class MainWindow implements Initializable {
                     public void sendFileInfo(String path, SerializersTypes serializersType) {
                         try {
                             SerializersHandler serializersHandler = new SerializersHandler(serializersType);
-                            serializersHandler.read(path);
+
+                            List<HierarchyObject> hierarchyObjects = serializersHandler.read(path);
+
+                            lvMain.setItems(FXCollections.observableArrayList(hierarchyObjects.stream().map((hierarchyObject) ->{
+                                FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("objectComponent",
+                                        ObjectComponent.class,
+                                        new ComponentConstructorParam(null, hierarchyObject));
+                                return (MainMenuComponent) loaderResponse.controller;
+                            }).collect(Collectors.toList())));
+
                         } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
                             alert.setTitle("Error");
                             alert.setHeaderText("Cannot load file!");
@@ -166,7 +182,7 @@ public class MainWindow implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        mainList.setCellFactory(lv ->{
+        lvMain.setCellFactory(lv ->{
             ListCell<MainMenuComponent> cell = new ListCell<MainMenuComponent>(){
                 @Override
                 @SneakyThrows
