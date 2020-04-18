@@ -5,7 +5,7 @@ import annotations.HierarchyAnnotation;
 import java.time.LocalDate;
 
 @HierarchyAnnotation(dataType = DataType.object, label = "Новостная статья")
-public class NewsArticle extends Prose implements HierarchyObject {
+public class NewsArticle extends Prose {
 
     @HierarchyAnnotation(dataType = DataType.object, label = "Газета")
     public Newspaper newspaper;

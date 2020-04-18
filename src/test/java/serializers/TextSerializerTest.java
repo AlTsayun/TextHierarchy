@@ -1,24 +1,22 @@
 package serializers;
 
+import hierarchy.HierarchyHandler;
 import hierarchy.HierarchyObject;
 import hierarchy.Newspaper;
 import hierarchy.Text;
-import lombok.ToString;
-import org.junit.jupiter.api.BeforeEach;
+import hierarchy.dataEnums.DataEnumsHandler;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BinarySerializerTest {
+class TextSerializerTest {
 
     @Test
     void givenObjectsArrayAndFilePath_whenWriting_thenSavingObjectsToFile(){
-        BinarySerializer<HierarchyObject> serializer = new BinarySerializer<>(10, TimeUnit.SECONDS);
+        TextSerializer<HierarchyObject> serializer = new TextSerializer<>(10, TimeUnit.SECONDS, new HierarchyHandler(), new DataEnumsHandler());
 
         assertDoesNotThrow(() ->{
             serializer.write(new HierarchyObject[]{new Newspaper(), new Text()}, "test.txt");
@@ -28,7 +26,7 @@ class BinarySerializerTest {
 
     @Test
     void givenEmptyArrayAndFilePath_whenWriting_thenSavingObjectsToFile(){
-        BinarySerializer<HierarchyObject> serializer = new BinarySerializer<>(10, TimeUnit.SECONDS);
+        TextSerializer<HierarchyObject> serializer = new TextSerializer<>(10, TimeUnit.SECONDS, new HierarchyHandler(), new DataEnumsHandler());
 
         assertDoesNotThrow(() ->{
             serializer.write(new HierarchyObject[]{}, "test.txt");
@@ -37,19 +35,11 @@ class BinarySerializerTest {
 
     @Test
     void givenFilePath_whenReading_thenDoesntThrow(){
-        BinarySerializer<HierarchyObject> serializer = new BinarySerializer<>(10, TimeUnit.SECONDS);
+        TextSerializer<HierarchyObject> serializer = new TextSerializer<>(10, TimeUnit.SECONDS, new HierarchyHandler(), new DataEnumsHandler());
         assertDoesNotThrow(() -> {
             List<HierarchyObject> objects = serializer.read("test.txt");
             System.out.println(objects.toString());
         });
     }
 
-    @Test
-    void givenWrongFilePath_whenReading_thenThrowsIOException(){
-        BinarySerializer<Integer> integerBinarySerializer = new BinarySerializer<>(10, TimeUnit.SECONDS);
-        assertThrows(IOException.class,() -> {
-            ArrayList<Integer> integers = integerBinarySerializer.read("test_test.txt");
-            System.out.println(integers.toString());
-        });
-    }
 }

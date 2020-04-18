@@ -13,5 +13,9 @@ public enum Language {
     @EnumAnnotation(fullName = "Немецкий")
     ge,
     @EnumAnnotation(fullName = "Французский")
-    fr
+    fr;
+    @Override
+    public String toString() {
+        return this.getDeclaringClass().getAnnotation(HierarchyAnnotation.class).label() + ":" + super.toString();
+    }
 }

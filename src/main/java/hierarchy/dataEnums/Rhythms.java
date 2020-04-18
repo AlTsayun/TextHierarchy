@@ -16,5 +16,9 @@ public enum Rhythms {
     @EnumAnnotation(fullName = "Анапест")
     anapest,
     @EnumAnnotation(fullName = "Дактиль")
-    dactyl
+    dactyl;
+    @Override
+    public String toString() {
+        return this.getDeclaringClass().getAnnotation(HierarchyAnnotation.class).label() + ":" + super.toString();
+    }
 }

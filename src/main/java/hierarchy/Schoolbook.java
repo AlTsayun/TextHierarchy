@@ -4,7 +4,7 @@ package hierarchy;
 import annotations.HierarchyAnnotation;
 
 @HierarchyAnnotation(dataType = DataType.object, label = "Учебник")
-public class Schoolbook extends Prose implements HierarchyObject {
+public class Schoolbook extends Prose {
 
     @HierarchyAnnotation(dataType = DataType.integer, label = "Количество упражнений")
     public int exercisesCount;

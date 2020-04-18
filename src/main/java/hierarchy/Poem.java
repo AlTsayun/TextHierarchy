@@ -4,7 +4,7 @@ import annotations.HierarchyAnnotation;
 import hierarchy.dataEnums.Rhythms;
 
 @HierarchyAnnotation(dataType = DataType.object, label = "Стихотворение")
-public class Poem extends Text implements HierarchyObject {
+public class Poem extends Text {
 
     @HierarchyAnnotation(dataType = DataType.integer, label = "Количество строк")
     public int linesCount;

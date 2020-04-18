@@ -1,11 +1,12 @@
 package hierarchy;
 
 import annotations.HierarchyAnnotation;
+import serializers.ClassesHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class HierarchyHandler {
+public class HierarchyHandler implements ClassesHandler {
 
     //Map of classes' labels with corresponding class
     private final Map<String, Class<?>> hierarchyClassesList = new HashMap<>();
@@ -25,6 +26,8 @@ public class HierarchyHandler {
     public Set<String> getAllClassesNames() {
         return hierarchyClassesList.keySet();
     }
+
+
 
     public Field[] getFields(String className) throws ClassNotFoundException {
         try {
@@ -63,4 +66,12 @@ public class HierarchyHandler {
     }
 
 
+    @Override
+    public Class<?> getClassByName(String name)throws ClassNotFoundException {
+        Class<?> value = hierarchyClassesList.get(name);
+        if(value == null){
+            throw new ClassNotFoundException("Cannot find class \"" + name + "\"");
+        }
+        return value;
+    }
 }

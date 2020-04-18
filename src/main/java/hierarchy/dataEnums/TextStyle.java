@@ -16,5 +16,9 @@ public enum TextStyle {
     @EnumAnnotation(fullName = "Разговорный")
     colloquial,
     @EnumAnnotation(fullName = "Художественный")
-    writing
+    writing;
+    @Override
+    public String toString() {
+        return this.getDeclaringClass().getAnnotation(HierarchyAnnotation.class).label() + ":" + super.toString();
+    }
 }

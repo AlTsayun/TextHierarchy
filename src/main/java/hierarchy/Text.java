@@ -7,7 +7,7 @@ import lombok.ToString;
 
 
 @HierarchyAnnotation(dataType = DataType.object, label = "Текст")
-public class Text implements HierarchyObject {
+public class Text extends HierarchyObject {
 
     @HierarchyAnnotation(dataType = DataType.integer, label = "Количество символов")
     public int symbolCount;

@@ -3,7 +3,7 @@ package hierarchy;
 import annotations.HierarchyAnnotation;
 
 @HierarchyAnnotation(dataType = DataType.object, label = "Газета")
-public class Newspaper implements HierarchyObject {
+public class Newspaper extends HierarchyObject {
 
     @HierarchyAnnotation(dataType = DataType.string, label = "Главный редактор")
     public String editor;

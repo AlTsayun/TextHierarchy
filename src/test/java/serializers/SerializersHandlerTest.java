@@ -1,8 +1,7 @@
 package serializers;
 
-import hierarchy.HierarchyObject;
-import hierarchy.Newspaper;
-import hierarchy.Text;
+import hierarchy.*;
+import hierarchy.dataEnums.Language;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -17,15 +16,15 @@ class SerializersHandlerTest {
     @SneakyThrows
     void givenObjectsAndSerializerTypeAndPath_whenWriting_thenSavingToFile(){
         assertDoesNotThrow(() ->{
-            SerializersHandler handler = new SerializersHandler(SerializersTypes.binary);
+            SerializersHandler handler = new SerializersHandler(SerializersTypes.text);
             handler.write(new HierarchyObject[]{new Newspaper(), new Text()},"test.txt");
+
         });
-        System.out.println(new );
     }
     @Test
     void givenLocalFile_whenReading_thenLoadedObjects (){
         assertDoesNotThrow(() ->{
-            SerializersHandler handler = new SerializersHandler(SerializersTypes.binary);
+            SerializersHandler handler = new SerializersHandler(SerializersTypes.text);
             System.out.println(handler.read("test.txt").toString());
 
         });
