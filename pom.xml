@@ -16,7 +16,7 @@
         <!-- Dependencies versions -->
         <slf4j.version>1.7.30</slf4j.version>
         <lombok.version>1.18.12</lombok.version>
-        <javafx.version>13.0.2</javafx.version>
+        <javafx.version>15-ea+3</javafx.version>
         <jackson.version>2.10.3</jackson.version>
 
         <!-- Plugins versions -->
@@ -60,6 +60,14 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.10.3</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

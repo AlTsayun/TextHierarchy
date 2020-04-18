@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 
+
+//--module-path "D:\Programs\Java\javafx-sdk-11.0.2\lib" --add-modules=javafx.controls,javafx.fxml
 public class MainApplication extends Application{
     public static void main(String[] args) {
         launch();

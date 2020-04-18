@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import hierarchy.Newspaper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,9 @@ public class JsonSerializer<T> implements Serializer<T> {
     @Override
     public void write(T[] objects, String fileName) throws IOException {
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))){
-        ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             for (T o: objects) {
                 bufferedWriter.write(objectMapper.writeValueAsString(o.getClass()));
                 bufferedWriter.write(objectMapper.writeValueAsString(o));
@@ -39,7 +43,9 @@ public class JsonSerializer<T> implements Serializer<T> {
 
     @Override
     public List<T> read(String fileName) throws IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         List<T> objects;
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();

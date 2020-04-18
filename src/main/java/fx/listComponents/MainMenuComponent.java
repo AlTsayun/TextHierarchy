@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface MainMenuComponent extends Component {
 
-    Object getValue()  throws IOException;
+//    Object getValue()  throws IOException;
     void onBtnEditClicked(ActionEvent event);
     void delete();
 }

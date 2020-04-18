@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -134,18 +135,27 @@ public class MainWindow implements Initializable {
                     public void sendFileInfo(String path, SerializersTypes serializersType) {
                         try {
                             SerializersHandler serializersHandler = new SerializersHandler(serializersType);
-                            HierarchyObject[] objects = lvMain.getItems().stream().map((component ->{
-                                return (HierarchyObject) component;
+                            HierarchyObject[] objects = lvMain.getItems().stream().map((new Function<MainMenuComponent, Object>() {
+                                @Override
+                                @SneakyThrows
+                                public Object apply(MainMenuComponent component){
+                                    return (HierarchyObject) component.getValue();
+                                }
                             })).toArray(HierarchyObject[]::new);
                             serializersHandler.write(objects, path);
-
-                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error");
-                            alert.setHeaderText("Cannot save file!");
-                            alert.showAndWait();
+                            Alert saveFileError = new Alert(Alert.AlertType.INFORMATION);
+                            saveFileError.setTitle("Done!");
+                            saveFileError.setHeaderText("File successfully saved");
+                            saveFileError.showAndWait();
+                        } catch (IOException e) {
+                            Alert saveFileError = new Alert(Alert.AlertType.ERROR);
+                            saveFileError.setTitle("Error");
+                            saveFileError.setHeaderText("Cannot save file!");
+                            saveFileError.showAndWait();
+                            e.printStackTrace();
                         }
                     }
-                }));
+                }, true));
         showModalWindow((Parent) loaderResponse.loadedObject, "Configure file saving");
     }
 
@@ -169,13 +179,21 @@ public class MainWindow implements Initializable {
                                 return (MainMenuComponent) loaderResponse.controller;
                             }).collect(Collectors.toList())));
 
-                        } catch (IOException e) {Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error");
-                            alert.setHeaderText("Cannot load file!");
-                            alert.showAndWait();
+                            Alert saveFileError = new Alert(Alert.AlertType.INFORMATION);
+                            saveFileError.setTitle("Done!");
+                            saveFileError.setHeaderText("File successfully loaded");
+                            saveFileError.showAndWait();
+
+
+                        } catch (IOException e) {
+                            Alert loadFileError = new Alert(Alert.AlertType.ERROR);
+                            loadFileError.setTitle("Error");
+                            loadFileError.setHeaderText("Cannot load file!");
+                            loadFileError.showAndWait();
+                            e.printStackTrace();
                         }
                     }
-                }));
+                }, false));
         showModalWindow((Parent) loaderResponse.loadedObject, "Configure file loading");
     }
 
