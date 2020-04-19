@@ -40,7 +40,7 @@ public class ObjectComponent implements Component, MainMenuComponent{
                 }));
         Parent editWindowRoot = (Parent) loaderResponse.loadedObject;
         Stage editWindowStage = new Stage();
-        editWindowStage.setTitle("Редактирование объекта " + lblName.getText());
+        editWindowStage.setTitle("Editing object " + lblName.getText());
         editWindowStage.initModality(Modality.APPLICATION_MODAL);
         editWindowStage.setScene(new Scene(editWindowRoot));
         editWindowStage.setResizable(false);

@@ -2,23 +2,24 @@ package serializers;
 
 import annotations.SerializerAnnotation;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import hierarchy.Newspaper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,12 +29,45 @@ public class JsonSerializer<T> implements Serializer<T> {
     private final long timeout;
     private final TimeUnit timeUnit;
 
+    class LocalDateSerializer extends StdSerializer<LocalDate>{
+
+        public LocalDateSerializer(){
+            this(null);
+        }
+
+        protected LocalDateSerializer(Class<LocalDate> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(LocalDate value, JsonGenerator jgen, SerializerProvider serializerProvider) throws IOException {
+            jgen.writeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+    }
+
+    class LocalDateDeserializer extends StdDeserializer<LocalDate>{
+
+        public LocalDateDeserializer() {
+            this(null);
+        }
+
+        protected LocalDateDeserializer(Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public LocalDate deserialize(JsonParser jpars, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            String s = jpars.readValueAs(String.class);
+            return LocalDate.parse(s);
+        }
+    }
+
+
     @Override
     public void write(T[] objects, String fileName) throws IOException {
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))){
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            objectMapper.registerModule(new SimpleModule().addSerializer(LocalDate.class, new LocalDateSerializer()));
             for (T o: objects) {
                 bufferedWriter.write(objectMapper.writeValueAsString(o.getClass()));
                 bufferedWriter.write(objectMapper.writeValueAsString(o));
@@ -43,18 +77,20 @@ public class JsonSerializer<T> implements Serializer<T> {
 
     @Override
     public List<T> read(String fileName) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         List<T> objects;
 
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        final Future future = executor.submit(() -> {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future future = executor.submit(() -> {
             try{
 
                 List<T> oList = new ArrayList<T>();
                 String str = Files.readString(Path.of(fileName));
-                JsonParser parser = new JsonFactory().createParser(str);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new SimpleModule().addDeserializer(LocalDate.class, new LocalDateDeserializer()));
+                JsonFactory factory = new JsonFactory();
+                factory.setCodec(objectMapper);
+                JsonParser parser = factory.createParser(str);
 
                 while (parser.nextToken() != null){
 
