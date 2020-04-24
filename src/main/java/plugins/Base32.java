@@ -96,7 +96,7 @@ public class Base32 implements Plugin {
 
             for (int j = 0; j < 5 + (offset - 8); j++) {
                 int c = (int) ((buf & 0x00_00_00_FF__00_00_00_00L) >> 32);
-                buffer.write((char) (c & 0xFF));
+                buffer.write((char) c);
                 buf <<= 8;
             }
             i += 8;
