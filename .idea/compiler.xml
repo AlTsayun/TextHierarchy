@@ -10,5 +10,9 @@
         <module name="TextHierarchy" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="BaseCodingPlugin" target="1.5" />
+      <module name="PluginLoader" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
