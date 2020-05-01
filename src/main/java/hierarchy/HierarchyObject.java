@@ -23,6 +23,6 @@ public class HierarchyObject implements Serializable {
                 Object value = f.get(thisValue);
                 return f.getName() + ":" + value.toString();
             }
-        }).collect(Collectors.joining(","));
+        }).collect(Collectors.joining(",")) + ",";
     }
 }

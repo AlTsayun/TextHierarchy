@@ -105,12 +105,13 @@ public class TextSerializer<T> implements Serializer<T> {
     private ReadResponse readObject(String strToRead){
         Class<?> objectClass;
         String[] splittedStr = strToRead.split(valueSign, 2);
+        strToRead = splittedStr[1];
         objectClass = objectsHandler.getClassByName(splittedStr[0]);
         Object obj = objectClass.getConstructor().newInstance();
         Map<String, Field> fieldNameFieldMap = Arrays.stream(objectClass.getFields()).
                 collect(Collectors.toMap(f -> f.getName(), f -> f));
         String fieldName;
-        while (fieldNameFieldMap.isEmpty()){
+        while (!fieldNameFieldMap.isEmpty()){
             splittedStr = strToRead.split(valueSign, 2);
             fieldName = splittedStr[0];
             strToRead = splittedStr[1];
@@ -121,6 +122,16 @@ public class TextSerializer<T> implements Serializer<T> {
             ReadResponse readResponse = readField(strToRead, field);
             field.set(obj, readResponse.readObj);
             strToRead = readResponse.remainingStr;
+        }
+
+        //Removes comma after object
+        splittedStr = strToRead.split(separateSign, 2);
+        try {
+            strToRead = splittedStr[1];
+        } catch (Exception e) {
+            //For root object last comma in line is used by last field
+            //so no need to remove it
+            strToRead = splittedStr[0];
         }
         return new ReadResponse(obj, strToRead);
     }

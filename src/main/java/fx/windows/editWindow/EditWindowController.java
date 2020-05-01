@@ -53,7 +53,8 @@ public class EditWindowController implements Initializable {
             }
 
             listener.saveHierarchyObject(hierarchyObjectToEdit);
-            onBtnCancelClick(event);
+            Stage stage = (Stage) btnSave.getScene().getWindow();
+            stage.close();
         }catch (Exception e){
             btnSave.setStyle("-fx-focus-color: red");
         }

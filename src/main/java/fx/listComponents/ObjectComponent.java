@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class ObjectComponent implements Component, MainMenuComponent{
 
-    private HierarchyObject value;
+    private final HierarchyObject[] hierarchyObjectToEdit = new HierarchyObject[1];
 
     @FXML
     private Label lblName;
@@ -31,7 +31,6 @@ public class ObjectComponent implements Component, MainMenuComponent{
 
     @FXML
     public void onBtnEditClicked(ActionEvent event) {
-        final HierarchyObject[] hierarchyObjectToEdit = {value};
 
         FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("editWindow",
                 EditWindowController.class,
@@ -56,17 +55,17 @@ public class ObjectComponent implements Component, MainMenuComponent{
     }
 
     public ObjectComponent(ComponentConstructorParam param) {
-        this.value = (HierarchyObject) param.value;
+        this.hierarchyObjectToEdit[0] = (HierarchyObject) param.value;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lblName.setText(value.getClass().getAnnotation(HierarchyAnnotation.class).label());
+        lblName.setText(hierarchyObjectToEdit[0].getClass().getAnnotation(HierarchyAnnotation.class).label());
     }
 
     @Override
     public Object getValue() throws IOException {
-        return value;
+        return hierarchyObjectToEdit[0];
     }
 }
 

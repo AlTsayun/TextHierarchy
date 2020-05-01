@@ -102,25 +102,37 @@ public class MainWindowController implements Initializable {
 
     @FXML
     void onBtnDeleteClicked(ActionEvent event) {
-        
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete this object?");
+        MainMenuComponent item;
+        if ((item = lvMain.getSelectionModel().getSelectedItem()) == null){
+            Alert saveFileInfo = new Alert(Alert.AlertType.INFORMATION);
+            saveFileInfo.setTitle("No item selected");
+            saveFileInfo.setHeaderText("No item selected");
+            saveFileInfo.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete this object?");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if(result.isPresent() && result.get() == ButtonType.OK){
-            MainMenuComponent item = lvMain.getSelectionModel().getSelectedItem();
-            log.info("Removing: " + item.toString());
-            lvMain.getItems().remove(item);
-            item.delete();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                log.info("Removing: " + item.toString());
+                lvMain.getItems().remove(item);
+                item.delete();
+            }
         }
-
 
     }
 
     @FXML
     void onBtnEditClicked(ActionEvent event) {
-        MainMenuComponent item = lvMain.getSelectionModel().getSelectedItem();
-        log.info("Editing: " + item.toString());
-        item.onBtnEditClicked(new ActionEvent());
+        MainMenuComponent item;
+        if ((item = lvMain.getSelectionModel().getSelectedItem()) == null){
+            Alert saveFileInfo = new Alert(Alert.AlertType.INFORMATION);
+            saveFileInfo.setTitle("No item selected");
+            saveFileInfo.setHeaderText("No item selected");
+            saveFileInfo.showAndWait();
+        } else {
+            log.info("Editing: " + item.toString());
+            item.onBtnEditClicked(new ActionEvent());
+        }
     }
 
     @FXML
@@ -155,10 +167,10 @@ public class MainWindowController implements Initializable {
                             }
 
 
-                            Alert saveFileError = new Alert(Alert.AlertType.INFORMATION);
-                            saveFileError.setTitle("Done!");
-                            saveFileError.setHeaderText("File successfully saved");
-                            saveFileError.showAndWait();
+                            Alert saveFileInfo = new Alert(Alert.AlertType.INFORMATION);
+                            saveFileInfo.setTitle("Done!");
+                            saveFileInfo.setHeaderText("File successfully saved");
+                            saveFileInfo.showAndWait();
                         } catch (IOException e) {
                             Alert saveFileError = new Alert(Alert.AlertType.ERROR);
                             saveFileError.setTitle("Error");
@@ -207,10 +219,10 @@ public class MainWindowController implements Initializable {
                                 return (MainMenuComponent) loaderResponse.controller;
                             }).collect(Collectors.toList())));
 
-                            Alert saveFileError = new Alert(Alert.AlertType.INFORMATION);
-                            saveFileError.setTitle("Done!");
-                            saveFileError.setHeaderText("File successfully loaded");
-                            saveFileError.showAndWait();
+                            Alert loadedFileInfo = new Alert(Alert.AlertType.INFORMATION);
+                            loadedFileInfo.setTitle("Done!");
+                            loadedFileInfo.setHeaderText("File successfully loaded");
+                            loadedFileInfo.showAndWait();
 
 
                         } catch (IOException e) {
