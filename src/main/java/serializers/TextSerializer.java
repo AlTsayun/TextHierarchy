@@ -124,11 +124,11 @@ public class TextSerializer<T> implements Serializer<T> {
             strToRead = readResponse.remainingStr;
         }
 
-        //Removes comma after object
         splittedStr = strToRead.split(separateSign, 2);
-        try {
+        if (splittedStr.length > 1){
+            //Removes comma after object
             strToRead = splittedStr[1];
-        } catch (Exception e) {
+        } else{
             //For root object last comma in line is used by last field
             //so no need to remove it
             strToRead = splittedStr[0];
