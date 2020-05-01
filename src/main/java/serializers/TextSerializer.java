@@ -44,36 +44,32 @@ public class TextSerializer<T> implements Serializer<T> {
         this.enumsHandler = new DataEnumsHandler();
     }
 
-    @RequiredArgsConstructor
-    class ReadResponse{
-        private final Object readObj;
-        private final String remainingStr;
-    }
-
     @Override
-    public void write(T[] objects, String fileName) throws IOException {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))){
+    public byte[] serialize(T[] objects) throws IOException {
+        try(    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(byteArrayOutputStream))){
             for (T o: objects) {
                 bufferedWriter.write(o.toString() + "\n");
             }
+            bufferedWriter.flush();
+            return byteArrayOutputStream.toByteArray();
         }
     }
 
-
-
     @Override
-    public List<T> read(String fileName) throws IOException {
+    public List<T> deserialize(byte[] data) throws IOException {
         List<T> objects;
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         final Future future = executor.submit(() -> {
-            try(BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+            try(    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(byteArrayInputStream))){
 
                 List<T> oList = new ArrayList<T>();
                 String line;
                 T o;
-			    while ((line = reader.readLine()) != null){
-			        o = (T) readObject(line).readObj;
+                while ((line = reader.readLine()) != null){
+                    o = (T) readObject(line).readObj;
                     log.info("added object to list");
                     oList.add(o);
                 }
@@ -97,6 +93,12 @@ public class TextSerializer<T> implements Serializer<T> {
             executor.shutdownNow();
         }
         return objects;
+    }
+
+    @RequiredArgsConstructor
+    class ReadResponse{
+        private final Object readObj;
+        private final String remainingStr;
     }
 
     @SneakyThrows

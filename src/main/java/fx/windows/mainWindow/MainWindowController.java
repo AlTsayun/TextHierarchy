@@ -1,6 +1,10 @@
-package fx;
+package fx.windows.mainWindow;
 
 import annotations.HierarchyAnnotation;
+import fx.*;
+import fx.windows.chooseHierarchyClassMenu.*;
+import fx.windows.loadFileDialog.*;
+import fx.windows.saveFileDialog.*;
 import hierarchy.HierarchyHandler;
 import hierarchy.HierarchyObject;
 import fx.listComponents.MainMenuComponent;
@@ -18,12 +22,18 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import plugins.Plugin;
+import plugins.PluginsLoader;
 import serializers.SerializersHandler;
 import serializers.SerializersTypes;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Collection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -31,7 +41,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class MainWindow implements Initializable {
+public class MainWindowController implements Initializable {
 
     @FXML
     private ListView<MainMenuComponent> lvMain;
@@ -56,7 +66,7 @@ public class MainWindow implements Initializable {
             final String[] classNameToCreate = new String[]{null};
 
             FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("chooseHierarchyClassMenu",
-                    ChooseHierarchyClassMenu.class,
+                    ChooseHierarchyClassMenuController.class,
                     new ChooseHierarchyClassMenuConstructorParam(new ChooseHierarchyClassMenuListener() {
                         @Override
                         public void sendClassName(String className) {
@@ -90,17 +100,6 @@ public class MainWindow implements Initializable {
         }
     }
 
-    private void showModalWindow(Parent loadedObject, String title) {
-        Parent root = (Parent) loadedObject;
-
-        Stage stage = new Stage();
-        stage.setTitle(title);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.setScene(new Scene(root));
-        stage.setResizable(false);
-        stage.showAndWait();
-    }
-
     @FXML
     void onBtnDeleteClicked(ActionEvent event) {
         
@@ -124,15 +123,14 @@ public class MainWindow implements Initializable {
         item.onBtnEditClicked(new ActionEvent());
     }
 
-
     @FXML
     void onBtnSaveClicked(ActionEvent event) {
-        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("fileDialog",
-                FileDialog.class,
-                new FileDialogConstructorParam(new FileDialogListener() {
+        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("saveFileDialog",
+                SaveFileDialogController.class,
+                new SaveFileDialogConstructorParam(new SaveFileDialogListener() {
                     @Override
                     @SneakyThrows
-                    public void sendFileInfo(String path, SerializersTypes serializersType) {
+                    public void sendFileInfo(String path, SerializersTypes serializersType, String pluginName) {
                         try {
                             SerializersHandler serializersHandler = new SerializersHandler(serializersType);
                             HierarchyObject[] objects = lvMain.getItems().stream().map((new Function<MainMenuComponent, Object>() {
@@ -142,7 +140,21 @@ public class MainWindow implements Initializable {
                                     return (HierarchyObject) component.getValue();
                                 }
                             })).toArray(HierarchyObject[]::new);
-                            serializersHandler.write(objects, path);
+
+                            byte[] data = serializersHandler.write(objects);
+                            String extension = "";
+
+                            if(pluginName != null){
+                                PluginsLoader pluginsLoader = new PluginsLoader();
+                                Plugin plugin = (Plugin) pluginsLoader.loadPlugin(pluginName).getConstructor().newInstance();
+                                data = plugin.convert(data);
+                                extension = plugin.getFileExtension();
+                            }
+                            try (FileOutputStream stream = new FileOutputStream(path + extension)) {
+                                stream.write(data);
+                            }
+
+
                             Alert saveFileError = new Alert(Alert.AlertType.INFORMATION);
                             saveFileError.setTitle("Done!");
                             saveFileError.setHeaderText("File successfully saved");
@@ -155,22 +167,38 @@ public class MainWindow implements Initializable {
                             e.printStackTrace();
                         }
                     }
-                }, true));
+                }));
         showModalWindow((Parent) loaderResponse.loadedObject, "Configure file saving");
     }
 
     @FXML
     void onBtnLoadClicked(ActionEvent event) {
-        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("fileDialog",
-                FileDialog.class,
-                new FileDialogConstructorParam(new FileDialogListener() {
-                    @SneakyThrows
+        FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("loadFileDialog",
+                LoadFileDialogController.class,
+                new LoadFileDialogConstructorParam(new LoadFileDialogListener() {
                     @Override
                     public void sendFileInfo(String path, SerializersTypes serializersType) {
                         try {
-                            SerializersHandler serializersHandler = new SerializersHandler(serializersType);
+                            byte[] data = Files.readAllBytes(Path.of(path));
 
-                            List<HierarchyObject> hierarchyObjects = serializersHandler.read(path);
+                            PluginsLoader pluginsLoader = new PluginsLoader();
+                            String fileExtension = path.substring(path.lastIndexOf("."));
+                            try {
+                                Plugin plugin = pluginsLoader.getPluginForFileExtension(fileExtension);
+                                data = plugin.revert(data);
+                            } catch (IllegalArgumentException e) {
+                                log.info("No plugin applied on loading file \"" + path + "\"");
+                            }
+
+
+                            List<HierarchyObject> hierarchyObjects = new ArrayList<>();
+                            try {
+                                SerializersHandler serializersHandler = new SerializersHandler(serializersType);
+                                hierarchyObjects = serializersHandler.read(data);
+                            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                                throw new IOException(e);
+                            }
+
 
                             lvMain.setItems(FXCollections.observableArrayList(hierarchyObjects.stream().map((hierarchyObject) ->{
                                 FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("objectComponent",
@@ -193,10 +221,9 @@ public class MainWindow implements Initializable {
                             e.printStackTrace();
                         }
                     }
-                }, false));
+                }));
         showModalWindow((Parent) loaderResponse.loadedObject, "Configure file loading");
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -249,6 +276,17 @@ public class MainWindow implements Initializable {
 
 
         });
+    }
+
+    private void showModalWindow(Parent loadedObject, String title) {
+        Parent root = (Parent) loadedObject;
+
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setScene(new Scene(root));
+        stage.setResizable(false);
+        stage.showAndWait();
     }
 
 }

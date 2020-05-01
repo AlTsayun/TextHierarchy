@@ -1,12 +1,11 @@
 package serializers;
 
 import hierarchy.HierarchyObject;
-import hierarchy.NewsArticle;
 import hierarchy.Newspaper;
 import hierarchy.Text;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,19 +14,23 @@ import static org.junit.jupiter.api.Assertions.*;
 class JsonSerializerTest {
 
     @Test
-    void givenHierarchyObjectAndFilePath_whenWriting_thenSavingItToFile (){
+    void givenHierarchyObjects_whenSerialize_thenSavingItByteArray (){
         final JsonSerializer<HierarchyObject> serializer = new JsonSerializer<>(10, TimeUnit.SECONDS);
         assertDoesNotThrow(() ->{
-            serializer.write(new HierarchyObject[]{new NewsArticle(), new Text()}, "test.txt");
+            System.out.println(Arrays.toString(serializer.serialize(new HierarchyObject[]{new Newspaper(), new Text()})));
+
         });
     }
 
 
     @Test
-    void givenLocalFile_whenReading_thenLoadedObjects (){
+    void givenByteArray_whenDeserialize_thenLoadedObjects(){
         final JsonSerializer<HierarchyObject> serializer = new JsonSerializer<>(10, TimeUnit.SECONDS);
         assertDoesNotThrow(() ->{
-            List<HierarchyObject> hierarchyObjects = serializer.read("test.txt");
+            HierarchyObject[] objects = {new Newspaper(), new Text()};
+            System.out.println(Arrays.toString(objects));
+            byte[] data = serializer.serialize(objects);
+            List<HierarchyObject> hierarchyObjects = serializer.deserialize(data);
             System.out.println(hierarchyObjects.toString());
         });
     }

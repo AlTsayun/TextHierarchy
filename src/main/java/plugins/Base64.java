@@ -7,6 +7,20 @@ import java.nio.file.Paths;
 public class Base64  implements Plugin{
     private final String fileExtension = ".b64";
 
+    @Override
+    public byte[] convert(byte[] data){
+        return encode(data).getBytes();
+    }
+    @Override
+    public byte[] revert(byte[] data) {
+        return decode(data);
+    }
+
+    @Override
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
     private String encode(byte[] data) {
         char[] tbl = {
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -99,19 +113,4 @@ public class Base64  implements Plugin{
         return buffer.toByteArray();
     }
 
-    @Override
-    public void save(byte[] data, String fileNameWithoutExtension) throws IOException {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileNameWithoutExtension + fileExtension))){
-            bufferedWriter.write(encode(data));
-            bufferedWriter.flush();
-        }
-    }
-
-    @Override
-    public byte[] load(String fileNameWithExtension) throws IllegalArgumentException, IOException {
-        if (!fileNameWithExtension.substring(fileNameWithExtension.lastIndexOf(".")).equals(fileExtension)){
-            throw new IllegalArgumentException("Wrong fileExtension");
-        }
-        return decode(Files.readAllBytes(Paths.get(fileNameWithExtension)));
-    }
 }

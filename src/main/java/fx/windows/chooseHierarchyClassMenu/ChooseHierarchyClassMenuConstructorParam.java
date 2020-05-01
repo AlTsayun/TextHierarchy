@@ -1,4 +1,4 @@
-package fx;
+package fx.windows.chooseHierarchyClassMenu;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,9 @@
 package fx.listComponents;
 
 import annotations.HierarchyAnnotation;
+import fx.windows.editWindow.EditWindowController;
+import fx.windows.editWindow.EditWindowConstructorParam;
+import fx.windows.editWindow.EditWindowListener;
 import hierarchy.HierarchyObject;
 import fx.*;
 import javafx.event.ActionEvent;
@@ -31,7 +34,7 @@ public class ObjectComponent implements Component, MainMenuComponent{
         final HierarchyObject[] hierarchyObjectToEdit = {value};
 
         FXMLFileLoaderResponse<Object, Object> loaderResponse = FXMLFileLoader.loadFXML("editWindow",
-                EditWindow.class,
+                EditWindowController.class,
                 new EditWindowConstructorParam(hierarchyObjectToEdit[0], new EditWindowListener() {
                     @Override
                     public void saveHierarchyObject(HierarchyObject hierarchyObject) {

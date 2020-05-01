@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 @RequiredArgsConstructor
 @SerializerAnnotation(type = SerializersTypes.binary)
@@ -16,24 +17,28 @@ public class BinarySerializer<T> implements Serializer<T> {
 
 
     @Override
-    public void write(T[] objects, String fileName) throws IOException {
-        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))){
-        for (T o: objects) {
-            objectOutputStream.writeObject(o.getClass());
-            objectOutputStream.writeObject(((Object) o));
-        }
-        objectOutputStream.writeObject( (T) null);
+    public byte[] serialize(T[] objects) throws IOException {
+        try(    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)){
+            for (T o: objects) {
+                objectOutputStream.writeObject(o.getClass());
+                objectOutputStream.writeObject(((Object) o));
+            }
+            objectOutputStream.writeObject( (T) null);
+            objectOutputStream.flush();
+            return byteArrayOutputStream.toByteArray();
         }
     }
 
     @Override
-    public ArrayList<T> read(String fileName) throws IOException {
+    public List<T> deserialize(byte[] data) throws IOException {
 
         ArrayList<T> objects;
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         final Future future = executor.submit(() -> {
-            try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+            try(    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+                    ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)){
                 ArrayList<T> objectsWhileReading = new ArrayList<>();
                 Class<?> objectClass;
                 T o;

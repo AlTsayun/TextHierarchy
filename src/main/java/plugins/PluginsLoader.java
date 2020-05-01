@@ -6,20 +6,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
 public class PluginsLoader {
     private final ClassLoader classLoader;
     private final URL resourceFolder;
-    public PluginsLoader() throws Exception {
+
+
+    public PluginsLoader() throws MissingResourceException {
             resourceFolder = PluginsLoader.class.getResource("");
         if (resourceFolder == null){
-            throw new Exception("Cannot find resource \"plugins\"");
+            throw new MissingResourceException("Cannot find resource", "plugins", "");
         }
         URL[] urls = new URL[]{resourceFolder};
         classLoader = new URLClassLoader(urls);
@@ -37,12 +39,38 @@ public class PluginsLoader {
             while ((pluginFile = br.readLine()) != null) {
                 int pos = pluginFile.lastIndexOf(".");
                 if (pluginFile.substring(pos).equals(".class")){
-                    pluginsNames.add(pluginFile.substring(0, pos));
+                    String pluginName = pluginFile.substring(0, pos);
+                    try {
+                        Class<?> pluginClass = loadPlugin(pluginName);
+                        if(Plugin.class.isAssignableFrom(pluginClass) &&
+                                (!Plugin.class.equals(pluginClass))){
+                            pluginsNames.add(pluginName);
+                        }
+                    } catch (ClassNotFoundException e) {
+                        log.info("Failed loading \"" + pluginName + "\"");
+                    }
                 }
             }
         }
 
         return pluginsNames;
+    }
+
+    public Plugin getPluginForFileExtension(String fileExtension) throws IllegalArgumentException, IOException {
+
+        try {
+            List<String> pluginsNames = getPluginsNames();
+            for (String pluginName :
+                    pluginsNames) {
+                Plugin plugin = (Plugin) loadPlugin(pluginName).getConstructor().newInstance();
+                if (plugin.getFileExtension().equals(fileExtension)){
+                    return plugin;
+                }
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            throw new IOException("Some plugins to be loaded might not be applicable.");
+        }
+        throw new IllegalArgumentException("No plugin for such fileExtension found.");
     }
 
     private ClassLoader getContextClassLoader() {

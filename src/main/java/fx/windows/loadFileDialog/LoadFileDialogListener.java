@@ -1,7 +1,7 @@
-package fx;
+package fx.windows.loadFileDialog;
 
 import serializers.SerializersTypes;
 
-public interface FileDialogListener {
+public interface LoadFileDialogListener {
     void sendFileInfo(String path, SerializersTypes serializersType);
 }

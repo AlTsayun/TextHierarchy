@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<AnchorPane maxWidth="260.0" minWidth="260.0" prefHeight="250.0" prefWidth="260.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fx.ChooseHierarchyClassMenu">
+<AnchorPane maxWidth="260.0" minWidth="260.0" prefHeight="250.0" prefWidth="260.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fx.windows.chooseHierarchyClassMenu.ChooseHierarchyClassMenuController">
    <children>
       <BorderPane>
          <center>

@@ -22,16 +22,6 @@ public class IntegerComponent implements Component {
     @FXML
     private TextField tfValue;
 
-//    @FXML
-//    void onTfValueChanged(ActionEvent event) {
-//        try {
-//            Integer.parseInt(tfValue.getText());
-//            tfValue.setStyle("");
-//        } catch (NumberFormatException e){
-//            tfValue.setStyle("-fx-focus-color: red; -fx-text-box-border: red");
-//        }
-//    }
-
     public IntegerComponent(ComponentConstructorParam param) {
         this.lblText = param.lblText;
         this.value = (Integer) param.value;

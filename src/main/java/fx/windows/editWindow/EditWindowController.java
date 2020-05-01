@@ -1,4 +1,4 @@
-package fx;
+package fx.windows.editWindow;
 
 import annotations.HierarchyAnnotation;
 import hierarchy.HierarchyObject;
@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 
-public class EditWindow implements Initializable {
+public class EditWindowController implements Initializable {
 
     private HierarchyObject hierarchyObjectToEdit;
 
@@ -60,7 +60,7 @@ public class EditWindow implements Initializable {
     }
 
 
-    public EditWindow(EditWindowConstructorParam param) {
+    public EditWindowController(EditWindowConstructorParam param) {
         hierarchyObjectToEdit = param.hierarchyObject;
         listener = param.listener;
     }

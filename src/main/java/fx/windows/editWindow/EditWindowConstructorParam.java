@@ -1,4 +1,4 @@
-package fx;
+package fx.windows.editWindow;
 
 import hierarchy.HierarchyObject;
 import lombok.RequiredArgsConstructor;

@@ -26,11 +26,11 @@ public class SerializersHandler {
             this.serializer = (Serializer<HierarchyObject>) serializersList.get(serializersType).getConstructor(long.class, TimeUnit.class).newInstance(timeout, timeUnit);
     }
 
-    public void write(HierarchyObject[] hierarchyObjects, String fileName)throws IOException {
-        serializer.write(hierarchyObjects, fileName);
+    public byte[] write(HierarchyObject[] hierarchyObjects)throws IOException {
+        return serializer.serialize(hierarchyObjects);
     };
-    public List<HierarchyObject> read(String fileName)throws IOException{
-        return serializer.read(fileName);
+    public List<HierarchyObject> read(byte[] data)throws IOException{
+        return serializer.deserialize(data);
     }
 }
 

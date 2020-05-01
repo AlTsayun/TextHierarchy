@@ -1,8 +1,7 @@
 package plugins;
 
-import java.io.IOException;
-
 public interface Plugin {
-    void save(byte[] data, String fileNameWithoutExtension) throws IOException;
-    byte[] load(String fileNameWithExtension) throws IllegalArgumentException, IOException;
+    byte[] convert(byte[] data);
+    byte[] revert(byte[] data);
+    String getFileExtension();
 }

@@ -1,22 +1,30 @@
-package fx;
+package fx.windows.saveFileDialog;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import plugins.PluginsLoader;
 import serializers.SerializersTypes;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class FileDialog implements Initializable {
-    private FileDialogListener listener;
-    private final boolean isSaving;
+public class SaveFileDialogController implements Initializable {
+    private SaveFileDialogListener listener;
+    private final String defaultPluginName = "None";
+
+    @FXML
+    private ComboBox<String> cmbPlugins;
 
     @FXML
     private ToggleGroup tgFileType;
@@ -56,7 +64,7 @@ public class FileDialog implements Initializable {
        else throw new IllegalStateException("No rb selected!");
 
             File file = new File(tfIn.getText());
-            if(isSaving && !file.exists()){
+            if(!file.exists()){
                 Alert createFileConfirmation = new Alert(Alert.AlertType.CONFIRMATION);
                 createFileConfirmation.setTitle("File doesn't exist");
                 createFileConfirmation.setHeaderText("Create a file?");
@@ -75,8 +83,12 @@ public class FileDialog implements Initializable {
                 });
             }
 
+            String selectedPluginName = cmbPlugins.getSelectionModel().getSelectedItem();
+            if(selectedPluginName.equals(defaultPluginName)){
+                selectedPluginName = null;
+            }
 
-            listener.sendFileInfo(tfIn.getText(), serializersType);
+            listener.sendFileInfo(tfIn.getText(), serializersType, selectedPluginName);
             Stage stage = (Stage) btnOk.getScene().getWindow();
             stage.close();
         } catch (IllegalStateException e) {
@@ -84,26 +96,43 @@ public class FileDialog implements Initializable {
         }
     }
 
-    public FileDialog(FileDialogConstructorParam param) {
+    public SaveFileDialogController(SaveFileDialogConstructorParam param) {
         this.listener = param.listener;
-        this.isSaving = param.isSaving;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        btnOk.setDisable(!isSaving);
+
+        //Show red when file doesn't exist
         tfIn.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue,
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue,
                                 String newValue) {
                     if (new File(newValue).exists()){
                         tfIn.setStyle("");
-                        btnOk.setDisable(false);
                     }else {
                         tfIn.setStyle("-fx-focus-color: red; -fx-text-box-border: red");
-                        btnOk.setDisable(!isSaving);
                 }
             }
         });
+
+        //Configure combobox with plugins
+        List<String> pluginsNames;
+        try {
+            PluginsLoader pluginsLoader = new PluginsLoader();
+             pluginsNames = pluginsLoader.getPluginsNames();
+        }catch (IOException | MissingResourceException e){
+            Alert createFileError = new Alert(Alert.AlertType.ERROR);
+            createFileError.setTitle("Problem while loading plugins");
+            createFileError.setHeaderText("Cannot load plugins folder properly");
+            createFileError.showAndWait();
+            pluginsNames = new ArrayList<>();
+        }
+
+        pluginsNames.add(defaultPluginName);
+        cmbPlugins.setItems(FXCollections.observableList(pluginsNames));
+        cmbPlugins.getSelectionModel().select(defaultPluginName);
+
     }
 }

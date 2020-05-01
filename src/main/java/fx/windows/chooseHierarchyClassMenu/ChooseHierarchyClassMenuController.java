@@ -1,4 +1,4 @@
-package fx;
+package fx.windows.chooseHierarchyClassMenu;
 
 import hierarchy.HierarchyHandler;
 import javafx.collections.FXCollections;
@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class ChooseHierarchyClassMenu implements Initializable {
+public class ChooseHierarchyClassMenuController implements Initializable {
 
     private ChooseHierarchyClassMenuListener listener;
 
@@ -39,7 +39,7 @@ public class ChooseHierarchyClassMenu implements Initializable {
             onBtnCancelClick(event);
     }
 
-    public ChooseHierarchyClassMenu(ChooseHierarchyClassMenuConstructorParam param) {
+    public ChooseHierarchyClassMenuController(ChooseHierarchyClassMenuConstructorParam param) {
         this.listener = param.listener;
     }
 

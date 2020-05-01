@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -29,54 +30,23 @@ public class JsonSerializer<T> implements Serializer<T> {
     private final long timeout;
     private final TimeUnit timeUnit;
 
-    class LocalDateSerializer extends StdSerializer<LocalDate>{
-
-        public LocalDateSerializer(){
-            this(null);
-        }
-
-        protected LocalDateSerializer(Class<LocalDate> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(LocalDate value, JsonGenerator jgen, SerializerProvider serializerProvider) throws IOException {
-            jgen.writeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        }
-    }
-
-    class LocalDateDeserializer extends StdDeserializer<LocalDate>{
-
-        public LocalDateDeserializer() {
-            this(null);
-        }
-
-        protected LocalDateDeserializer(Class<?> vc) {
-            super(vc);
-        }
-
-        @Override
-        public LocalDate deserialize(JsonParser jpars, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            String s = jpars.readValueAs(String.class);
-            return LocalDate.parse(s);
-        }
-    }
-
-
     @Override
-    public void write(T[] objects, String fileName) throws IOException {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))){
+    public byte[] serialize(T[] objects) throws IOException {
+        try(    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(byteArrayOutputStream))){
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new SimpleModule().addSerializer(LocalDate.class, new LocalDateSerializer()));
             for (T o: objects) {
                 bufferedWriter.write(objectMapper.writeValueAsString(o.getClass()));
                 bufferedWriter.write(objectMapper.writeValueAsString(o));
             }
+            bufferedWriter.flush();
+            return byteArrayOutputStream.toByteArray();
         }
     }
 
     @Override
-    public List<T> read(String fileName) throws IOException {
+    public List<T> deserialize(byte[] data) throws IOException {
         List<T> objects;
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -84,7 +54,7 @@ public class JsonSerializer<T> implements Serializer<T> {
             try{
 
                 List<T> oList = new ArrayList<T>();
-                String str = Files.readString(Path.of(fileName));
+                String str = new String(data, StandardCharsets.UTF_8);
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new SimpleModule().addDeserializer(LocalDate.class, new LocalDateDeserializer()));
@@ -123,5 +93,38 @@ public class JsonSerializer<T> implements Serializer<T> {
             executor.shutdownNow();
         }
         return objects;
+    }
+
+    class LocalDateSerializer extends StdSerializer<LocalDate>{
+
+        public LocalDateSerializer(){
+            this(null);
+        }
+
+        protected LocalDateSerializer(Class<LocalDate> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(LocalDate value, JsonGenerator jgen, SerializerProvider serializerProvider) throws IOException {
+            jgen.writeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+    }
+
+    class LocalDateDeserializer extends StdDeserializer<LocalDate>{
+
+        public LocalDateDeserializer() {
+            this(null);
+        }
+
+        protected LocalDateDeserializer(Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public LocalDate deserialize(JsonParser jpars, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            String s = jpars.readValueAs(String.class);
+            return LocalDate.parse(s);
+        }
     }
 }

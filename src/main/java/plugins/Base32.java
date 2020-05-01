@@ -1,9 +1,6 @@
 package plugins;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -11,21 +8,20 @@ public class Base32 implements Plugin {
     private final String fileExtension = ".b32";
 
     @Override
-    public void save(byte[] data, String fileNameWithoutExtension) throws IOException {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileNameWithoutExtension + fileExtension))){
-            bufferedWriter.write(encode(data));
-            bufferedWriter.flush();
-        }
+    public byte[] convert(byte[] data){
+        return encode(data).getBytes();
     }
     @Override
-    public byte[] load(String fileNameWithExtension) throws IllegalArgumentException, IOException {
-        if (!fileNameWithExtension.substring(fileNameWithExtension.lastIndexOf(".")).equals(fileExtension)){
-            throw new IllegalArgumentException("Wrong fileExtension");
-        }
-        return decode(Files.readAllBytes(Paths.get(fileNameWithExtension)));
+    public byte[] revert(byte[] data) {
+        return decode(data);
     }
 
-    public String encode(byte[] data){
+    @Override
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    private String encode(byte[] data){
         char[] tbl = {
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
                 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7'

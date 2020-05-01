@@ -1,4 +1,4 @@
-import fx.MainWindow;
+import fx.windows.mainWindow.MainWindowController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +16,7 @@ public class MainApplication extends Application{
 
     @Override
     public void start(Stage stage) throws Exception{
-        URL resource = MainWindow.class.getResource("mainWindow.fxml");
+        URL resource = MainWindowController.class.getResource("mainWindow.fxml");
         Parent root = FXMLLoader.load(resource);
         Scene scene = new Scene(root);
         stage.setTitle("TextHierarchy");
