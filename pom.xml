@@ -17,7 +17,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <lombok.version>1.18.12</lombok.version>
         <javafx.version>15-ea+3</javafx.version>
-        <jackson.version>2.10.3</jackson.version>
+        <jackson.version>2.13.4.1</jackson.version>
 
         <!-- Plugins versions -->
 <!--        <maven.surefire.plugin.version>3.0.0-M3</maven.surefire.plugin.version>-->
